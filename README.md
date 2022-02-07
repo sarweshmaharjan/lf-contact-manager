@@ -8,7 +8,11 @@
 ## Install
 
 ```sh
-npm start dev
+#frontend
+npm run start
+
+#backend
+npm run dev
 ```
 
 ## Usage

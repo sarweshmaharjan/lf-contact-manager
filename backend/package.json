@@ -1,0 +1,29 @@
+{
+  "name": "contact-manager",
+  "version": "1.0.0",
+  "description": "Simple CRUD application with Node js as backend and React js as frontend. Developed for further improving and solidifying knowledge learned during the session conducted by LeapFrog Technology.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon ./src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sarweshmaharjan/lf-contact-manager.git"
+  },
+  "author": "sarweshmaharjan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sarweshmaharjan/lf-contact-manager/issues"
+  },
+  "homepage": "https://github.com/sarweshmaharjan/lf-contact-manager#readme",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.2",
+    "joi": "^17.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.21",
+    "mongoose": "^6.2.0",
+    "nodemon": "^2.0.15"
+  }
+}
