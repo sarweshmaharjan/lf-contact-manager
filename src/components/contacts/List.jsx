@@ -72,7 +72,7 @@ export default function List() {
                     {contact.isFavorite?<AiFillHeart />:<AiOutlineHeart />}
                     </button>
                     </td>
-                  <td><img src={contact.profile_photo} alt="pf" className="avatar" /></td>
+                  <td><img src={contact.profile_photo || "../../assets/images/default_avatar.png"} alt="pf" className="avatar" /></td>
                   <td>{contact.name}</td>
                   <td>
                     {contact.phone.map((no, index) => {

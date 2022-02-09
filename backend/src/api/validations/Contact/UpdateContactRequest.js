@@ -30,7 +30,7 @@ const rules = Joi.object({
       "string.min": "length must be at least {{#limit}} characters long",
     }),
   profile_photo: Joi.string(),
-  address: Joi.string()
+  address: Joi.string().allow(null, '')
     .max(100)
     .pattern(/^[a-zA-Z ,0-9]*$/, "string")
     .trim()
@@ -40,11 +40,11 @@ const rules = Joi.object({
       "string.max":
         "length must be less than or equal to {{#limit}} characters long",
     }),
-  email: Joi.string().email().messages({
+  email: Joi.string().allow(null, '').email().messages({
     "string.empty":"the field is required",
     "string.email": "incorrect email format. Example: example@example.com",
   }),
-  organization: Joi.string()
+  organization: Joi.string().allow(null, '')
     .max(100)
     .pattern(/^[a-zA-Z0-9 ]*$/)
     .trim()

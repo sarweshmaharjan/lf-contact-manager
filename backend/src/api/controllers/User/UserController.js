@@ -21,6 +21,7 @@ async function create(req, res) {
 
   //Checking if the user already exist or not.
   let checkUser = await UserService.isValid(req.body.email);
+  // console.log(checkUser);
   if (checkUser) return response.failure(res, 400,{message: "User already exists"});
   //Creating new user.
   try {

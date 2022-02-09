@@ -1,11 +1,15 @@
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { storage } from "../../config/firebase";
 import { getContact, editContact } from "../../services/contactService";
 
 export default function Edit() {
   let { id } = useParams();
+  const [image, setImage] = useState({});
+  const [isUploading, setIsUploading]=useState(false);
   const [form, setForm] = useState({
     name: "",
     phone: [
@@ -44,12 +48,47 @@ export default function Edit() {
     e.preventDefault();
 
     try {
-      await editContact(id,form);
+      await editContact(id, form);
       navigate("/contacts");
     } catch (error) {
       if (error.response && error.response.status === 400) {
         await setErr(error.response.data.err);
       }
+    }
+  };
+  const uploadImage = (event) => {
+    setIsUploading(true);
+    if (!image) {
+      setErr({
+        ...err,
+        profile_photo: "Counld not upload image",
+      });
+      return;
+    }
+  
+    const storageRef = ref(storage, `images/${image.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, image);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {},
+      (error) => {
+        setErr({
+          ...err,
+          profile_photo: error,
+        });
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setForm({ ...form, profile_photo: downloadURL });
+          setIsUploading(false);
+        });
+      }
+    );
+  };
+  const imageSet = (e) => {
+    if (e.target.files[0]) {
+      setImage(e.target.files[0]);
     }
   };
   return (
@@ -61,7 +100,7 @@ export default function Edit() {
             <label>Full name</label>
             <input
               type="text"
-              value={form.name}
+              value={form.name || ''}
               className={`form-control ${err.name ? "is-invalid" : ""}`}
               placeholder="Last name"
               onChange={(event) =>
@@ -75,7 +114,7 @@ export default function Edit() {
             <label>Home</label>
             <input
               type="text"
-              value={form.phone[0].home}
+              value={form.phone[0].home || ''}
               className={`form-control mb-3 ${err.home ? "is-invalid" : ""}`}
               placeholder="Enter home, eg: 014700564"
               onChange={(event) =>
@@ -89,7 +128,7 @@ export default function Edit() {
             <label>Work</label>
             <input
               type="text"
-              value={form.phone[0].work}
+              value={form.phone[0].work || ''}
               className={`form-control mb-3 ${err.work ? "is-invalid" : ""}`}
               placeholder="Enter work, eg: 9854354145"
               onChange={(event) =>
@@ -103,7 +142,7 @@ export default function Edit() {
             <label>Phone</label>
             <input
               type="text"
-              value={form.phone[0].mobile}
+              value={form.phone[0].mobile || ''}
               className={`form-control mb-3 ${err.mobile ? "is-invalid" : ""}`}
               placeholder="Enter phone, eg: 3548354247"
               onChange={(event) =>
@@ -118,23 +157,26 @@ export default function Edit() {
           <div className="form-group pb-3">
             <label>Photo</label>
             <input
-              type="text"
-              value={form.profile_photo}
+              type="file"
               className={`form-control mb-3 ${
                 err.profile_photo ? "is-invalid" : ""
               }`}
-              placeholder="Enter image URI"
-              onChange={(event) =>
-                setForm({ ...form, profile_photo: event.target.value })
-              }
+              onChange={imageSet}
             />
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={uploadImage}
+            >
+              Upload
+            </button>
             <div className="invalid-feedback">{err.profile_photo}</div>
           </div>
           <div className="form-group pb-3">
-            <label>Email address</label>
+            <label>Email address (Optional)</label>
             <input
               type="email"
-              value={form.email}
+              value={form.email || ''}
               className={`form-control mb-3 ${err.email ? "is-invalid" : ""}`}
               placeholder="Enter email"
               onChange={(event) =>
@@ -144,10 +186,10 @@ export default function Edit() {
             <div className="invalid-feedback">{err.email}</div>
           </div>
           <div className="form-group pb-3">
-            <label>Organization</label>
+            <label>Organization (Optional)</label>
             <input
               type="text"
-              value={form.organization}
+              value={form.organization || ''}
               className={`form-control mb-3 ${
                 err.organization ? "is-invalid" : ""
               }`}
@@ -159,10 +201,10 @@ export default function Edit() {
             <div className="invalid-feedback">{err.organization}</div>
           </div>
           <div className="form-group pb-3">
-            <label>Address</label>
+            <label>Address (Optional)</label>
             <input
               type="text"
-              value={form.address}
+              value={form.address || ''}
               className={`form-control mb-3 ${err.address ? "is-invalid" : ""}`}
               placeholder="Enter your address"
               onChange={(event) =>
@@ -177,7 +219,7 @@ export default function Edit() {
           >
             Cancel
           </button>
-          <button type="submit" className="btn btn-primary btn-block">
+          <button type="submit" disabled={isUploading} className="btn btn-primary btn-block">
             Update
           </button>
         </form>

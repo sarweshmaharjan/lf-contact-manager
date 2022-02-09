@@ -43,6 +43,7 @@ function App() {
             <Route index element={<Login />} />
           </Route>
           <Route path="/logout" element={<Logout />} />
+          <Route path="/" element={<Index />}/>
           <Route path="*" element={<PageNotFound />}></Route>
         </Routes>
       </div>
