@@ -1,21 +1,34 @@
-const express = require("express");
-const cors = require("cors");
-const db = require("./api/config/DatabaseConfig");
-require("dotenv").config();
-
-//Routes
-const auth = require("./api/routes/api_auth");
-const contact = require("./api/routes/api_contact");
+import express from "express";
+import network from "./bin/www/server";
+import plugins from "./bin/plugins/plugins";
+import connect from "./api/config/databaseConfig";
+import router from "./api/routes/router";
 
 const app = express();
-db.connect();
-app.use(express.json());
-app.use(cors())
+/**
+ * Connect to Database: MongoDB
+ * @function - connect
+ */
+connect();
 
-app.use('/api/auth',auth);
-app.use('/api/contacts',contact);
+/**
+ * All plugins are present at.
+ * @function - plugins
+ * @param  app - constant of express().
+ * @param express - express package.
+ */
+plugins(app, express);
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Starting Node js on PORT ${port}...`);
-});
+/**
+ * API routes.
+ * @function - router
+ * @param  app - constant of express function.
+ */
+router(app);
+
+/**
+ * Network setup - PORT and all.
+ * @function - network
+ * @param  app - constant of express function.
+ */
+network(app);
